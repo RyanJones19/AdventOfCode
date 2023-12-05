@@ -29,8 +29,6 @@ def part1(cardData):
 def part2(data):
     deckOfCards = defaultdict(int)
 
-    cardMapping = {}
-    totalCards = 0
     for i, line in enumerate(data):
         deckOfCards[i+1] += 1
         cardId, card = line.split(':')
