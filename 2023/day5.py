@@ -49,6 +49,7 @@ def part1():
 
 def part1Faster(seedList):
     generateFasterMap()
+    soils = [next((seed + (mapping[0] - mapping[1]) for mapping in D1["seed-to-soil"] if mapping[1] <= seed < mapping[1] + mapping[2]), seed) for seed in seedList]
     fertilizers = [next((soil + (mapping[0] - mapping[1]) for mapping in D1["soil-to-fertilizer"] if mapping[1] <= soil < mapping[1] + mapping[2]), soil) for soil in soils]
     waters = [next((fertilizer + (mapping[0] - mapping[1]) for mapping in D1["fertilizer-to-water"] if mapping[1] <= fertilizer < mapping[1] + mapping[2]), fertilizer) for fertilizer in fertilizers]
     lights = [next((water + (mapping[0] - mapping[1]) for mapping in D1["water-to-light"] if mapping[1] <= water < mapping[1] + mapping[2]), water) for water in waters]
