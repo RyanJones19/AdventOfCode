@@ -4,6 +4,11 @@ from collections import defaultdict
 
 data = open(sys.argv[1]).readlines()
 seeds = [int(x) for x in data[0].strip().split(":")[1].split()]
+part2Seeds = []
+
+for i, num in enumerate(seeds):
+    if i % 2 == 0:
+        part2Seeds += [int(x) for x in range(num, num+seeds[i+1])]
 
 D = defaultdict(list)
 D1 = defaultdict(list)
@@ -42,9 +47,8 @@ def part1():
     locations = [next((mapping[1] for mapping in D["humidity-to-location"] if mapping[0] == humidity), humidity) for humidity in humidities]
     return min(locations)
 
-def part1Faster():
+def part1Faster(seedList):
     generateFasterMap()
-    soils = [next((seed + (mapping[0] - mapping[1]) for mapping in D1["seed-to-soil"] if mapping[1] <= seed < mapping[1] + mapping[2]), seed) for seed in seeds]
     fertilizers = [next((soil + (mapping[0] - mapping[1]) for mapping in D1["soil-to-fertilizer"] if mapping[1] <= soil < mapping[1] + mapping[2]), soil) for soil in soils]
     waters = [next((fertilizer + (mapping[0] - mapping[1]) for mapping in D1["fertilizer-to-water"] if mapping[1] <= fertilizer < mapping[1] + mapping[2]), fertilizer) for fertilizer in fertilizers]
     lights = [next((water + (mapping[0] - mapping[1]) for mapping in D1["water-to-light"] if mapping[1] <= water < mapping[1] + mapping[2]), water) for water in waters]
@@ -55,4 +59,5 @@ def part1Faster():
 
 
 #print("Answer 1: " + str(part1()))
-print("Faster Answer 1: " + str(part1Faster()))
+print("Faster Answer 1: " + str(part1Faster(seeds)))
+print("Answer 2: " + str(part1Faster(part2Seeds)))
