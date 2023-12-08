@@ -10,7 +10,7 @@ class Machine:
         self.clock = 0
         self.clockMap: list(tuple(int, int, str)) = []
         self.spritePosition = range(3)
-        self.CRTScreen = ["." for _ in range(240)]
+        self.CRTScreen = [" " for _ in range(240)]
 
     def operate(self, operation: str):
         if operation == "noop":
