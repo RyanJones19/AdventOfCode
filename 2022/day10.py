@@ -32,7 +32,7 @@ class Machine:
         if self.clock in self.spritePosition:
             self.CRTScreen[self.clock] = "#"
 
-    def get_draw_location(self):
+    def get_draw_location(self) -> int:
         if self.clock < 40:
             return self.X
         elif self.clock < 80:
