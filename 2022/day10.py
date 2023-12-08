@@ -54,8 +54,6 @@ for cycle in machine.clockMap:
 
 print(f"Part 1: {sum(signalStrengths)}")
 
-print(machine.clockMap)
-
 print("Part 2:")
 for x in range(0, 240, 40):
     for screen in machine.CRTScreen[x:x+40]:
