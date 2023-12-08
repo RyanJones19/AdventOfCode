@@ -48,8 +48,8 @@ class Machine:
 
 
 machine = Machine()
-for instructtion in machineInstructions:
-    machine.operate(instructtion)
+for instruction in machineInstructions:
+    machine.operate(instruction)
 
 signalStrengths = []
 for cycle in machine.clockMap:
