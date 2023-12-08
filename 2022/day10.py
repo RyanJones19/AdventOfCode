@@ -3,8 +3,7 @@ machineInstructions = open(sys.argv[1]).read().strip().split('\n')
 class Machine:
     def __init__(self): self.X, self.clock, self.clockMap, self.spritePosition, self.CRTScreen = 1, 0, [], range(3), [" " for _ in range(240)]
     def operate(self, operation: str):
-        if operation == "noop":
-            self.perform_cycle()
+        if operation == "noop": self.perform_cycle()
         else:
             operation, value = operation.split()
             self.perform_cycle(), self.perform_cycle()
