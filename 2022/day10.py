@@ -8,9 +8,9 @@ class Machine:
             operation, value = operation.split()
             self.perform_cycle(), self.perform_cycle()
             self.X += int(value)
-            self.spritePosition = range((self.X-1)%40, (self.X+2)%40)
+            self.spritePosition = range((self.X-1)%40, (self.X+2)%40+40) if (self.X-1)%40 > (self.X+2)%40 else range((self.X-1)%40, (self.X+2)%40)
     def perform_cycle(self): self.draw(); self.clock += 1; self.clockMap.append((self.clock, self.X))
-    def draw(self): self.CRTScreen[self.clock] = "#" if self.clock%40 in self.spritePosition else " "
+    def draw(self): self.CRTScreen[self.clock] = "#" if (self.clock%40 == 0 and (self.clock or self.clock%40 in self.spritePosition)) or (self.clock%40 in self.spritePosition) else " "
 machine = Machine()
 [machine.operate(instruction) for instruction in machineInstructions]
 signalStrengths = [cycle[0] * cycle[1] for cycle in machine.clockMap if cycle[0] in [20,60,100,140,180,220]]
