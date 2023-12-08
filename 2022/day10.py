@@ -1,5 +1,4 @@
 import sys
-# sample problem gets X to -1
 
 machineInstructions = open(sys.argv[1]).read().strip().split('\n')
 meaningfulCycles = [20,60,100,140,180,220]
@@ -31,7 +30,6 @@ class Machine:
     def draw(self):
         if (self.clock%40) in self.spritePosition:
             self.CRTScreen[self.clock] = "#"
-
 
 machine = Machine()
 for instruction in machineInstructions:
