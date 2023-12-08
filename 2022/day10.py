@@ -13,9 +13,6 @@ class Machine:
         self.CRTScreen = [" " for _ in range(240)]
 
     def operate(self, operation: str):
-        if self.clock == 120:
-            print(self.clock)
-            print(self.spritePosition)
         if operation == "noop":
             self.draw()
             self.clock += 1 
@@ -25,13 +22,6 @@ class Machine:
             self.draw()
             self.clock += 1
             self.clockMap.append((self.clock, self.X, operation + value))
-            if self.clock == 40:
-                print(self.clock)
-                print(self.spritePosition)
-
-            if self.clock == 120:
-                print(self.clock)
-                print(self.spritePosition)
             self.draw()
             self.clock +=1
             self.clockMap.append((self.clock, self.X, operation + value))
