@@ -13,6 +13,9 @@ class Machine:
         self.CRTScreen = [" " for _ in range(240)]
 
     def operate(self, operation: str):
+        if self.clock == 120:
+            print(self.clock)
+            print(self.spritePosition)
         if operation == "noop":
             self.draw()
             self.clock += 1 
@@ -22,29 +25,22 @@ class Machine:
             self.draw()
             self.clock += 1
             self.clockMap.append((self.clock, self.X, operation + value))
+            if self.clock == 40:
+                print(self.clock)
+                print(self.spritePosition)
+
+            if self.clock == 120:
+                print(self.clock)
+                print(self.spritePosition)
             self.draw()
             self.clock +=1
             self.clockMap.append((self.clock, self.X, operation + value))
             self.X += int(value)
-            self.spritePosition = range(self.get_draw_location()-1, self.get_draw_location()+2)
+            self.spritePosition = range((self.X-1)%40, (self.X+2)%40)
 
     def draw(self):
-        if self.clock in self.spritePosition:
+        if (self.clock%40) in self.spritePosition:
             self.CRTScreen[self.clock] = "#"
-
-    def get_draw_location(self) -> int:
-        if self.clock < 40:
-            return self.X
-        elif self.clock < 80:
-            return self.X + 40
-        elif self.clock < 120:
-            return self.X + 80
-        elif self.clock < 160:
-            return self.X + 120
-        elif self.clock < 200:
-            return self.X + 160
-        else:
-            return self.X + 200
 
 
 machine = Machine()
@@ -57,6 +53,8 @@ for cycle in machine.clockMap:
         signalStrengths.append(cycle[0] * cycle[1])
 
 print(f"Part 1: {sum(signalStrengths)}")
+
+print(machine.clockMap)
 
 print("Part 2:")
 for x in range(0, 240, 40):
