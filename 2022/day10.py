@@ -1,7 +1,6 @@
 import sys
 
 machineInstructions = open(sys.argv[1]).read().strip().split('\n')
-meaningfulCycles = [20,60,100,140,180,220]
 
 class Machine:
     def __init__(self):
@@ -35,15 +34,8 @@ machine = Machine()
 for instruction in machineInstructions:
     machine.operate(instruction)
 
-signalStrengths = []
-for cycle in machine.clockMap:
-    if cycle[0] in meaningfulCycles:
-        signalStrengths.append(cycle[0] * cycle[1])
+signalStrengths = [cycle[0] * cycle[1] for cycle in machine.clockMap if cycle[0] in [20,60,100,140,180,220]]
 
 print(f"Part 1: {sum(signalStrengths)}")
-
-print("Part 2:")
-for x in range(0, 240, 40):
-    for screen in machine.CRTScreen[x:x+40]:
-        print(screen, end="")
-    print()
+print("Part 2: ")
+print('\n'.join([''.join(machine.CRTScreen[x:x+40]) for x in range(0, 240, 40)]))
