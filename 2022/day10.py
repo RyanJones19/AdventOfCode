@@ -6,25 +6,24 @@ class Machine:
     def __init__(self):
         self.X = 1
         self.clock = 0
-        self.clockMap: list(tuple(int, int, str)) = []
+        self.clockMap: list(tuple(int, int)) = []
         self.spritePosition = range(3)
         self.CRTScreen = [" " for _ in range(240)]
 
     def operate(self, operation: str):
         if operation == "noop":
-            self.draw()
-            self.clock += 1 
-            self.clockMap.append((self.clock, self.X, operation))
+            self.perform_cycle()
         else:
             operation, value = operation.split()
-            self.draw()
-            self.clock += 1
-            self.clockMap.append((self.clock, self.X, operation + value))
-            self.draw()
-            self.clock +=1
-            self.clockMap.append((self.clock, self.X, operation + value))
+            self.perform_cycle()
+            self.perform_cycle()
             self.X += int(value)
             self.spritePosition = range((self.X-1)%40, (self.X+2)%40)
+
+    def perform_cycle(self):
+        self.draw()
+        self.clock += 1
+        self.clockMap.append((self.clock, self.X))
 
     def draw(self):
         if (self.clock%40) in self.spritePosition:
