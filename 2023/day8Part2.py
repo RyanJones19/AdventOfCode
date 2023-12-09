@@ -14,7 +14,6 @@ networkMappings = defaultdict(tuple)
 
 networkMappings = {match[1]: (match[2], match[3]) for mapping in network if (match := networkMappingPattern.match(mapping))}
 
-
 class Ghost:
     def __init__(self, id: int, startNode: str):
         self.id = id
@@ -44,16 +43,13 @@ class Network:
     def ghostsFinishedBruteForce(self) -> bool:
         return all(ghost.currentNode[2] == "Z" for ghost in self.ghosts)
 
+    def removeGhost(self, ghostID: int) -> int:
+        self.ghosts.pop(ghostID)
+        return self.cycles
+
     def ghostFinishedLCM(self) -> bool:
-        for i, ghost in enumerate(self.ghosts):
-            if ghost.currentNode[2] == "Z":
-                print(f"Ghost {ghost.id} finished at cycle {self.cycles}")
-                ghosts.pop(i)
-                self.ghostCycleLengths.append(self.cycles)
-
+        self.ghostCycleLengths += [self.removeGhost(i) for i, ghost in enumerate(self.ghosts) if ghost.currentNode[2] == "Z"]
         return len(self.ghosts) == 0
-
-
 
 ghosts = [Ghost(i, node) for i, node in enumerate(networkMappings) if node[2] == "A"]
 network = Network(ghosts)
@@ -66,4 +62,5 @@ while not network.ghostFinishedLCM(): #network.ghostsFinishedBruteForce():
         instructionIndex = 0
     network.traverse(instruction)
 
+print(network.ghostCycleLengths)
 print(math.lcm(*network.ghostCycleLengths))
