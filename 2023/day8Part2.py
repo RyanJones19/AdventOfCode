@@ -47,7 +47,7 @@ class Network:
         self.ghosts.pop(ghostID)
         return self.cycles
 
-    def ghostFinishedLCM(self) -> bool:
+    def ghostsFinishedLCM(self) -> bool:
         self.ghostCycleLengths += [self.removeGhost(i) for i, ghost in enumerate(self.ghosts) if ghost.currentNode[2] == "Z"]
         return len(self.ghosts) == 0
 
@@ -55,7 +55,7 @@ ghosts = [Ghost(i, node) for i, node in enumerate(networkMappings) if node[2] ==
 network = Network(ghosts)
 instructionIndex = 0
 
-while not network.ghostFinishedLCM(): #network.ghostsFinishedBruteForce():
+while not network.ghostsFinishedLCM(): #network.ghostsFinishedBruteForce():
     instruction = instructionPattern[instructionIndex]
     instructionIndex += 1
     if instructionIndex == len(instructionPattern):
