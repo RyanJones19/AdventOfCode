@@ -23,31 +23,6 @@ def expandUniverse(universe: list[list[str]]):
 def calculateDistanceBetweenGalaxies(galaxy1: list[int, int], galaxy2: list[int, int]) -> int:
     return abs(galaxy1[0] - galaxy2[0]) + abs(galaxy1[1] - galaxy2[1])
 
-def countGalaxyDistancesTwo(expansionFactor: int) -> int:
-    galaxyDistances = []
-    for i, galaxy in enumerate(list(galaxies.items())):
-        for j, otherGalaxy in enumerate(list(galaxies.items())[i+1:]):
-            galaxy1 = galaxy[1].copy()
-            galaxy2 = otherGalaxy[1].copy()
-            largerColumn = max(galaxy[1][0], otherGalaxy[1][0])
-            smallerColumn = min(galaxy[1][0], otherGalaxy[1][0])
-            largerRow = max(galaxy[1][1], otherGalaxy[1][1])
-            smallerRow = min(galaxy[1][1], otherGalaxy[1][1])
-            for k in columnsThatExpand:
-                if k in range(smallerColumn, largerColumn):
-                    if galaxy[1][0] > otherGalaxy[1][0]:
-                        galaxy1[0] += expansionFactor
-                    else:
-                        galaxy2[0] += expansionFactor
-            for k in rowsThatExpand:
-                if k in range(smallerRow, largerRow):
-                    if galaxy[1][1] > otherGalaxy[1][1]:
-                        galaxy1[1] += expansionFactor
-                    else:
-                        galaxy2[1] += expansionFactor
-            galaxyDistances.append(calculateDistanceBetweenGalaxies(galaxy1, galaxy2))
-    return sum(galaxyDistances)
-
 def countGalaxyDistances(expansionFactor: int) -> int:
     galaxyDistances = []
     
@@ -79,7 +54,6 @@ def countGalaxyDistances(expansionFactor: int) -> int:
             galaxyDistances.append(calculateDistanceBetweenGalaxies(galaxy1, galaxy2))
     
     return sum(galaxyDistances)
-
 
 universe = [list(row) for row in data]
 
