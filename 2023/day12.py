@@ -41,7 +41,6 @@ def countValidConfigurations(configurations: [[str]], validSplit: [int]) -> int:
 
 validConfigs = []
 for line in data:
-    break
     print()
     print(f"Processing {line}")
     configuration, validSplit = line.split(' ')
