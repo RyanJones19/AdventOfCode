@@ -7,9 +7,7 @@ def computeSequence(inputString: str, val: int, iter: int) -> int:
     if iter == len(inputString):
         return val
     else:
-        val += ord(inputString[iter])
-        val *= 17 
-        val %= 256
+        val = ((val + ord(inputString[iter])) * 17) % 256
         iter += 1
         return computeSequence(inputString, val, iter)
 
