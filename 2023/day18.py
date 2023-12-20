@@ -46,5 +46,5 @@ def solve(part2):
 start = time.time()
 print(f"Part 1: {solve(False)}")
 print(f"Part 2: {solve(True)}")
-print(f"Time: {time.time() - start:.4f}s")
+print(f"Time: {time.time() - start}s")
 
