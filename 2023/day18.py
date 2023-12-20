@@ -1,4 +1,5 @@
 import sys
+import time
 
 # Shoelace Theorem
 # A = 1/2 * sum(determinant(x1 y1, x2 y2, ...))
@@ -18,18 +19,8 @@ def solve(part2):
         direction, steps, color = line.split()
         if part2:
             steps = int(color[2:-2],16)
-            direction = int(color[-2])
-            if direction == 0:
-                direction = "R"
-            elif direction == 1:
-                direction = "D"
-            elif direction == 2:
-                direction = "L"
-            elif direction == 3:
-                direction = "U"
-            #print(steps, direction)
+            direction = {0: "R", 1: "D", 2: "L", 3: "U"}[int(color[-2])]
 
-        #print(direction, steps, color)
         stepsMoved += int(steps)
         if direction == "R":
             vertices.append((vertices[-1][0] + int(steps), vertices[-1][1]))
@@ -52,6 +43,8 @@ def solve(part2):
 
     return interiorPoints + stepsMoved
 
+start = time.time()
 print(f"Part 1: {solve(False)}")
 print(f"Part 2: {solve(True)}")
+print(f"Time: {time.time() - start:.4f}s")
 
