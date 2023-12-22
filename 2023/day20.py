@@ -21,21 +21,14 @@ class Circuit():
                 if target[1] == "low" and target[0].name == "rx":
                     pushAgain = False
                     break
-                if target[1] == "high" and target[0].name == "rm" and not self.foundDH and target[2] == "dh":
+                if target[1] == "low" and target[0].name == "dh" and not self.foundDH: # and target[2] == "dh":
                     self.foundDH = buttonPresses
-                    #print(f"Button pressed {buttonPresses} times before DH")
-                if target[1] == "high" and target[0].name == "rm" and not self.foundQD and target[2] == "qd":
-                    #print(f"{target[2]} -{target[1]}-> {target[0].name}")
+                if target[1] == "low" and target[0].name == "qd" and not self.foundQD: # and target[2] == "qd":
                     self.foundQD = buttonPresses
-                    #print(f"Button pressed {buttonPresses} times before QD")
-                if target[1] == "high" and target[0].name == "rm" and not self.foundBB and target[2] == "bb":
-                    #print(f"{target[2]} -{target[1]}-> {target[0].name}")
+                if target[1] == "low" and target[0].name == "bb" and not self.foundBB: # and target[2] == "bb":
                     self.foundBB = buttonPresses
-                    #print(f"Button pressed {buttonPresses} times before BB")
-                if target[1] == "high" and target[0].name == "rm" and not self.foundDP and target[2] == "dp":
-                    #print(f"{target[2]} -{target[1]}-> {target[0].name}")
+                if target[1] == "low" and target[0].name == "dp" and not self.foundDP: # and target[2] == "dp":
                     self.foundDP = buttonPresses
-                    #print(f"Button pressed {buttonPresses} times before DP")
             if target[1] == "low":
                 self.lowPulses += 1
             else:
@@ -45,12 +38,6 @@ class Circuit():
                 nextTargets = target[0].sendPulse()
                 for nextTarget in nextTargets:
                     targets.append([nextTarget])
-        #if part2:
-         #   print(f"{self.foundDH=} {self.foundQD=} {self.foundBB=} {self.foundDP=}")
-          #  time.sleep(5)
-           # print(f"{pushAgain=}")
-            #print(f"{not (self.foundDH and self.foundQD and self.foundBB and self.foundDP)=}")
-            #print(f"{pushAgain or not (self.foundDH and self.foundQD and self.foundBB and self.foundDP)=}")
         return pushAgain and not (self.foundDH and self.foundQD and self.foundBB and self.foundDP)
 
 class Broadcaster():
@@ -133,49 +120,53 @@ class Output():
     def receivePulse(self, inputPulse: str, inputName: str):
         self.inputPulse = inputPulse
 
-components = defaultdict(object)
-componentList = []
-for line in data:
-    component, *outputs = line.split(" -> ")
-    if component[0] == "b":
-        newComponent = Broadcaster("broadcaster", "", [])
-        components["broadcaster"] = newComponent
-    if component[0] == "%":
-        newComponent = FlipFlop(component[1:], [], False)
-        components[component[1:]] = newComponent
-    if component[0] == "&":
-        newComponent = Conjunction(component[1:], defaultdict(str), [])
-        components[component[1:]] = newComponent
+def buildComponets(data: list) -> list:
+    components = defaultdict(object)
+    for line in data:
+        component, *outputs = line.split(" -> ")
+        if component[0] == "b":
+            newComponent = Broadcaster("broadcaster", "", [])
+            components["broadcaster"] = newComponent
+        if component[0] == "%":
+            newComponent = FlipFlop(component[1:], [], False)
+            components[component[1:]] = newComponent
+        if component[0] == "&":
+            newComponent = Conjunction(component[1:], defaultdict(str), [])
+            components[component[1:]] = newComponent
 
-for line in data:
-    component, outputs = line.split(" -> ")
-    for output in outputs.split(","):
-        if output.strip() not in components.keys():
-            newComponent = Output(output.strip(), "")
-            components[output.strip()] = newComponent 
+    for line in data:
+        component, outputs = line.split(" -> ")
+        for output in outputs.split(","):
+            if output.strip() not in components.keys():
+                newComponent = Output(output.strip(), "")
+                components[output.strip()] = newComponent 
 
-for line in data:
-    component, outputs = line.split(" -> ")
-    if component[0] == "b":
-        for output in outputs.split(","):
-            components["broadcaster"].outputs.append(components[output.strip()])
-    if component[0] == "%":
-        for output in outputs.split(","):
-            components[component[1:]].outputs.append(components[output.strip()])
-            if type(components[output.strip()]) == Conjunction:
-                components[output.strip()].inputs[component[1:]] = "low"
-    if component[0] == "&":
-        for output in outputs.split(","):
-            components[component[1:]].outputs.append(components[output.strip()])
+    for line in data:
+        component, outputs = line.split(" -> ")
+        if component[0] == "b":
+            for output in outputs.split(","):
+                components["broadcaster"].outputs.append(components[output.strip()])
+        if component[0] == "%":
+            for output in outputs.split(","):
+                components[component[1:]].outputs.append(components[output.strip()])
+                if type(components[output.strip()]) == Conjunction:
+                    components[output.strip()].inputs[component[1:]] = "low"
+        if component[0] == "&":
+            for output in outputs.split(","):
+                components[component[1:]].outputs.append(components[output.strip()])
+    return components
 
 # Part 1
+components = buildComponets(data)
 circuit = Circuit()
 for i in range(1000):
     circuit.start(False, i)
 totalPulses = circuit.lowPulses * circuit.highPulses
 print(f"Part 1: {totalPulses}")
 
+
 # Part 2
+components = buildComponets(data)
 circuitTwo = Circuit()
 buttonPushes = 1
 while circuitTwo.start(True, buttonPushes):
