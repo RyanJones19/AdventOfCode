@@ -12,49 +12,45 @@ class Circuit():
         self.foundDH, self.foundQD, self.foundBB, self.foundDP = False, False, False, False
 
     def start(self, part2: bool, buttonPresses: int) -> bool:
-        pushAgain = True
-        targets = [Button("button", [components["broadcaster"]]).sendPulse()]
+        targets = [target for target in Button("button", [components["broadcaster"]]).sendPulse()]
         while targets:
-            target = targets.pop(0)[0]
-            #print(f"{target[2]} -{target[1]}-> {target[0].name}")
+            # Target is tuple (component Sending Pulse, Pulse Being Sent, Component Receiving Pulse)
+            target = targets.pop(0)
+            #print(f"{target[0]} -{target[1]}> {target[2].name}")
             if part2:
-                if target[1] == "low" and target[0].name == "rx":
-                    pushAgain = False
-                    break
-                if target[1] == "low" and target[0].name == "dh" and not self.foundDH: # and target[2] == "dh":
-                    self.foundDH = buttonPresses
-                if target[1] == "low" and target[0].name == "qd" and not self.foundQD: # and target[2] == "qd":
-                    self.foundQD = buttonPresses
-                if target[1] == "low" and target[0].name == "bb" and not self.foundBB: # and target[2] == "bb":
-                    self.foundBB = buttonPresses
-                if target[1] == "low" and target[0].name == "dp" and not self.foundDP: # and target[2] == "dp":
-                    self.foundDP = buttonPresses
+                self.foundDH = buttonPresses if target[1] == "low" and target[2].name == "dh" and not self.foundDH else self.foundDH
+                self.foundQD = buttonPresses if target[1] == "low" and target[2].name == "qd" and not self.foundQD else self.foundQD
+                self.foundBB = buttonPresses if target[1] == "low" and target[2].name == "bb" and not self.foundBB else self.foundBB
+                self.foundDP = buttonPresses if target[1] == "low" and target[2].name == "dp" and not self.foundDP else self.foundDP
+
             if target[1] == "low":
                 self.lowPulses += 1
             else:
                 self.highPulses += 1
-            componentSendsPulse = target[0].receivePulse(target[1], target[2])
+
+            componentSendsPulse = target[2].receivePulse(target[1], target[0])
             if componentSendsPulse:
-                nextTargets = target[0].sendPulse()
+                nextTargets = target[2].sendPulse()
                 for nextTarget in nextTargets:
-                    targets.append([nextTarget])
-        return pushAgain and not (self.foundDH and self.foundQD and self.foundBB and self.foundDP)
+                    targets.append(nextTarget)
+
+        return not(self.foundDH and self.foundQD and self.foundBB and self.foundDP)
 
 class Broadcaster():
     def __init__(self, name: str, pulseState: str, outputs: list):
         self.name = name
         self.pulseState = pulseState
         self.outputs = outputs
+        self.willSendPulse = True
 
     def receivePulse(self, pulseState: str, inputName: str) -> bool:
-        willSendPulse = True
         self.pulseState = pulseState
-        return willSendPulse
+        return self.willSendPulse
 
     def sendPulse(self):
         targets = []
         for output in self.outputs:
-            targets.append((output, self.pulseState, self.name))
+            targets.append((self.name, self.pulseState, output))
         return targets
         
 
@@ -66,7 +62,7 @@ class Button():
     def sendPulse(self) -> str:
         targets = []
         for output in self.outputs:
-            targets.append((output, "low", self.name))
+            targets.append((self.name, "low", output))
         return targets
 
 class FlipFlop():
@@ -74,21 +70,22 @@ class FlipFlop():
         self.name = name
         self.outputs = outputs
         self.state = state
+        self.willSendPulse = False
 
     def receivePulse(self, inputPulse: str, inputName: str) -> bool:
-        willSendPulse = False
+        self.willSendPulse = False
         if inputPulse == "low":
             self.state =  not self.state
-            willSendPulse = True
-        return willSendPulse
+            self.willSendPulse = True
+        return self.willSendPulse
 
     def sendPulse(self):
         targets = []
         for output in self.outputs:
             if self.state:
-                targets.append((output, "high", self.name))
+                targets.append((self.name, "high", output))
             else:
-                targets.append((output, "low", self.name))
+                targets.append((self.name, "low", output))
         return targets
 
 class Conjunction():
@@ -96,20 +93,20 @@ class Conjunction():
         self.name = name
         self.inputs = inputs
         self.outputs = outputs
+        self.willSendPulse = True
 
     def receivePulse(self, inputPulse: str, inputName: str) -> bool:
-        willSendPulse = True
         self.inputs[inputName] = inputPulse
-        return willSendPulse
+        return self.willSendPulse
 
     def sendPulse(self):
         targets = []
         if "low" not in self.inputs.values():
             for output in self.outputs:
-                targets.append((output, "low", self.name))
+                targets.append((self.name, "low", output))
         else:
             for output in self.outputs:
-                targets.append((output, "high", self.name))
+                targets.append((self.name, "high", output))
         return targets
 
 class Output():
@@ -122,6 +119,7 @@ class Output():
 
 def buildComponets(data: list) -> list:
     components = defaultdict(object)
+    # Generate the dictionary of components
     for line in data:
         component, *outputs = line.split(" -> ")
         if component[0] == "b":
@@ -134,6 +132,7 @@ def buildComponets(data: list) -> list:
             newComponent = Conjunction(component[1:], defaultdict(str), [])
             components[component[1:]] = newComponent
 
+    # If any of the components had outputs that were not already in the dictionary, add them (outputs that aren't modules)
     for line in data:
         component, outputs = line.split(" -> ")
         for output in outputs.split(","):
@@ -141,6 +140,7 @@ def buildComponets(data: list) -> list:
                 newComponent = Output(output.strip(), "")
                 components[output.strip()] = newComponent 
 
+    # Populate the components with their outputs and inputs now that the components exist
     for line in data:
         component, outputs = line.split(" -> ")
         if component[0] == "b":
@@ -163,7 +163,6 @@ for i in range(1000):
     circuit.start(False, i)
 totalPulses = circuit.lowPulses * circuit.highPulses
 print(f"Part 1: {totalPulses}")
-
 
 # Part 2
 components = buildComponets(data)
