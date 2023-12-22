@@ -117,7 +117,7 @@ class Output():
     def receivePulse(self, inputPulse: str, inputName: str):
         self.inputPulse = inputPulse
 
-def buildComponets(data: list) -> list:
+def buildComponents(data: list) -> list:
     components = defaultdict(object)
     # Generate the dictionary of components
     for line in data:
@@ -157,7 +157,7 @@ def buildComponets(data: list) -> list:
     return components
 
 # Part 1
-components = buildComponets(data)
+components = buildComponents(data)
 circuit = Circuit()
 for i in range(1000):
     circuit.start(False, i)
@@ -165,7 +165,7 @@ totalPulses = circuit.lowPulses * circuit.highPulses
 print(f"Part 1: {totalPulses}")
 
 # Part 2
-components = buildComponets(data)
+components = buildComponents(data)
 circuitTwo = Circuit()
 buttonPushes = 1
 while circuitTwo.start(True, buttonPushes):
