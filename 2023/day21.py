@@ -6,9 +6,11 @@ from collections import deque
 data = [[gardenSpot for gardenSpot in line.strip()] for line in open(sys.argv[1]).read().strip().split('\n')]
 
 part1Steps = 64
-part2Steps = 500
+part2Steps = 100
 width = len(data[0])
 height = len(data)
+
+mapOfGrids = {(range(0,width), range(0,height)): data}
 
 def getStartingCoordinate(grid: deque[str]) -> tuple[int, int]:
     for row in grid:
@@ -60,7 +62,6 @@ def getAvailableMoves(grid: deque[str], currentPositions: deque[tuple[int, int]]
     return set(availableMoves)
 
 start = time.time()
-mapOfGrids = {(range(0,width), range(0,height)): data}
 nextPossiblePositions = getAvailableMoves(data, [getStartingCoordinate(data)], False)
 
 for _ in range(part1Steps - 1):
@@ -69,7 +70,6 @@ for _ in range(part1Steps - 1):
 print(f"Part 1: {len(nextPossiblePositions)}")
 
 # Part 2
-mapOfGrids = {(range(0,width), range(0,height)): data}
 nextPossiblePositions = getAvailableMoves(data, [getStartingCoordinate(data)], True)
 
 for _ in range(part2Steps - 1):
