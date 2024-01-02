@@ -6,7 +6,7 @@ from collections import deque
 data = [[gardenSpot for gardenSpot in line.strip()] for line in open(sys.argv[1]).read().strip().split('\n')]
 
 part1Steps = 64
-part2Steps = 100
+part2Steps = 26501365
 width = len(data[0])
 height = len(data)
 
