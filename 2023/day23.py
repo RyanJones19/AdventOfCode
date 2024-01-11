@@ -6,14 +6,12 @@ from copy import deepcopy
 sys.setrecursionlimit(10000)
 
 input = open(sys.argv[1]).read().strip().split('\n')
-
 grid = [[obj for obj in line] for line in input]
-
 VISITED = defaultdict(list)
-
 stepsToEnd = list()
+attempt = 0
 
-def get_possible_steps(currentPosition: tuple, attempt: int) -> list[tuple]:
+def get_possible_steps(currentPosition: tuple) -> list[tuple]:
     possibleSteps = list()
     checkAllDirections = True
     if grid[currentPosition[0]][currentPosition[1]] in ('<', '>', '^', 'v'):
@@ -35,13 +33,13 @@ def get_possible_steps(currentPosition: tuple, attempt: int) -> list[tuple]:
                 possibleSteps.append(newPosition)
     return possibleSteps
 
-def take_step(currentPosition: tuple, attempt: int, stepsTaken: int):
-    print(f"We are at {currentPosition} and have taken {stepsTaken} steps to get there on path {attempt}")
-    print()
+def take_step(currentPosition: tuple, stepsTaken: int):
+    global attempt
     if currentPosition == (len(grid) - 1, len(grid[0]) - 2):
         stepsToEnd.append(stepsTaken)
+        print(f"Hit the end on path {attempt} with {stepsTaken} steps")
         return
-    possibleSteps = get_possible_steps(currentPosition, attempt)
+    possibleSteps = get_possible_steps(currentPosition)
     if len(possibleSteps) == 0:
         return
     stepsTaken += 1
@@ -50,13 +48,14 @@ def take_step(currentPosition: tuple, attempt: int, stepsTaken: int):
         if step in VISITED[attempt]:
             continue
         VISITED[attempt].append(step)
-        take_step(step, attempt, stepsTaken)
+        take_step(step, stepsTaken)
         if len(possibleSteps) > 1:
             attempt += 1
             VISITED[attempt] = copyVisited
 
-
-
-take_step((0,1), 0, 0)
+start = time.time()
+take_step((0,1), 0)
 print(max(stepsToEnd))
 print(stepsToEnd)
+print(f"Total paths: {len(VISITED)}")
+print(f"Total time: {time.time() - start}")
