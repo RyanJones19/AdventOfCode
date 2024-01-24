@@ -32,9 +32,6 @@ fn main() {
         .map(|line| line.chars().map(|c| c as u8).collect())
         .collect();
 
-    //let mut seen: HashSet<(i32, i32)> = HashSet::new();
-
-    // Create a new tuple called start that contains x, y coordinates
     let mut start = Tuple::new();
     let mut end = Tuple::new();
 
@@ -60,8 +57,6 @@ fn main() {
     }
 
     all_starts.push((start.x, start.y, start.num_moves));
-
-    //let mut possible_moves: Vec<(i32, i32, i32)> = vec![];//vec![(start.x, start.y, start.num_moves)];
 
     let mut min_moves = std::i32::MAX;
 
