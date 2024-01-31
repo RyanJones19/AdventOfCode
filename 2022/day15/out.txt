@@ -1,0 +1,3 @@
+Checking if move from (2, 18) to (3, 18) is valid
+Checking if move from (2, 18) to (4, 18) is valid
+Checking if move from (2, 18) to (5, 18) is valid
