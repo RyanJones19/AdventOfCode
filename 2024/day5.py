@@ -24,6 +24,7 @@ for orderingtest in orderings:
                 continue
             else:
                 valid = False
+                break
 
     if valid:
         sum += int(orderingtest[math.floor(len(orderingtest)/2)])
