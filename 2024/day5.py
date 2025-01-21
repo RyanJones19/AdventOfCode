@@ -12,7 +12,6 @@ for rule in rules:
     page1, page2 = rule.split("|")
     rulesmap[page1].append(page2)
 
-valid = True
 sum = 0
 
 invalidOrderings = list()
